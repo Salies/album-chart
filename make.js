@@ -13,11 +13,6 @@ function repeat(callback) {
     }, 1000);
 }
 
-var restartInterval = function() {
-    intervalFunction();
-    interval = setInterval(intervalFunction, 1000 );
-};
-
 repeat(function(i){
     let coverArt,
     mbid = albums[i].mbid, 
