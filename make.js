@@ -1,7 +1,7 @@
 const fs = require('fs');
 const request = require('request');
 
-var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], ua = 'AlbumCollage/0.1.0 ( danielserezane@outlook.com )';
+var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], ua = 'AlbumChart/0.1.0 ( danielserezane@outlook.com )';
 
 function repeat(callback) {
     let i = 0,
@@ -18,7 +18,7 @@ repeat(function(i){
     mbid = albums[i].mbid, 
     id = albums[i].id, 
     cover = albums[i].cover, 
-    url = `http://musicbrainz.org/ws/2/release/${mbid}?inc=release-groups+artist-credits+recordings&fmt=json`;
+    url = `http://musicbrainz.org/ws/2/release/${mbid}?inc=release-groups+artist-credits+recordings+media&fmt=json`;
 
     if(cover===true){
         coverArt = `http://coverartarchive.org/release/${mbid}/front`;
@@ -36,9 +36,8 @@ repeat(function(i){
         title = data["release-group"].title, 
         author = data["artist-credit"][0].name,
         authorID = data["artist-credit"][0].artist.id, 
-        release = data["release-group"]["first-release-date"];
-
-        let tracks = [];
+        release = data["release-group"]["first-release-date"], 
+        tracks = [];
 
         for(l=0;l<(data.media).length;l++){
             if(l == 1 && id == 81){
@@ -52,7 +51,8 @@ repeat(function(i){
                     {
                         cd:l + 1,
                         number:recordings[j].position,
-                        name:recordings[j].title
+                        name:recordings[j].title,
+                        length: new Date(recordings[j].recording.length).toISOString().substr(14, 5) //mb length is in ms, coverting
                     }
                 );
             }
