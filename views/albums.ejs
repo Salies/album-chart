@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Hundred Albums</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <% for(var i = 0; i < list.length; i++) {%>
+            <div class="album noselect">
+                <img id="<%=list[i].id%>" class="noselect" data-mbid="<%=list[i].mbid%>" src="<% if(list[i].cover===true){%>http://coverartarchive.org/release/<%=list[i].mbid%>/front<%}else{%><%=list[i].cover%><% } %>">
+            </div>
+            <% } %>
+    </div>
+
+    <div class="overlay">
+        <img src="img/close.png" class="close noselect">
+        <div class="album-window">
+            <img src="" class="album-display">
+            <div class="info">
+                <section class="title capitalize"></section>
+                <br>
+                <section class="artist capitalize"></section>
+                <br>
+                <section class="tracklist capitalize">
+                    <aside></aside>
+                    <aside></aside>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>let a = <%- JSON.stringify(albums) %>, c = <%- JSON.stringify(colors) %>;</script>
+    <script src="js/work.js"></script>
+</body>
+</html>

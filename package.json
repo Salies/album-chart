@@ -1,0 +1,25 @@
+{
+  "name": "album-chart",
+  "version": "1.0.0",
+  "description": "A hundred albums chart.",
+  "main": "app.js",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salies/album-chart.git"
+  },
+  "author": "Salies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Salies/album-chart/issues"
+  },
+  "homepage": "https://github.com/Salies/album-chart#readme"
+}

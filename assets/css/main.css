@@ -1,0 +1,134 @@
+:root{
+    --value:9.7%;
+}
+
+.wrapper{
+    margin-top:25px;
+    margin-bottom:25px;
+    position:absolute;
+    z-index:0;
+}
+
+body{
+    position:relative;
+    background:#000;
+    text-align:center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+.capitalize{
+    text-transform: capitalize;
+}
+
+.album img{
+    width:100%;
+    vertical-align: middle;
+}
+
+.album{
+    width:calc(9.5% - 6px);
+    padding:3px;
+    display:inline-block;
+    cursor:pointer;
+}
+
+.overlay{
+    height:100vh;
+    width:100%;
+    background:rgba(0,0,0,0.75) fixed;
+    position: fixed;
+    display:none;
+    top:0;
+    z-index:1;
+}
+
+.album-window{
+    width:auto;
+    height:auto;
+    min-width:745px;
+    min-height:335px; /*mudar pra ficar auto*/
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+}
+
+.close{
+    width:25px;
+    height:25px;
+    position:absolute;
+    right:15px;
+    top:15px;
+    cursor:pointer;
+}
+
+.album-display{
+    max-width: 225px;
+    display: block;
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.info{
+    float: left;
+    margin-left: 25px;
+    margin-top: 20px;
+    text-align:left;
+}
+
+.info section{
+    display:inline-block;
+}
+
+.info .title{
+    font-weight:700;
+    font-size: 18px;
+}
+
+.info .artist{
+    font-size: 15px;
+    margin-top: 3px;
+}
+
+.info .tracklist{
+    margin-top: 15px;
+    margin-left: 15px;
+    font-size:14px;
+}
+
+.tracklist .number{
+    margin-right:10px;
+}
+
+.tracklist div{
+    margin-bottom:5px;
+    max-width: 360px;
+}
+
+.tracklist div:last-of-type{
+    margin-bottom:0;
+}
+
+.tracklist aside{
+    float:left;
+    margin-left: 45px;
+    margin-bottom: 15px;
+}
+
+.tracklist aside:first-of-type{
+    margin-left:0;
+}
+
+.tracklist aside:last-of-type{
+    margin-right: 55px;
+}
