@@ -1,10 +1,10 @@
 const fs = require('fs');
 const request = require('request');
 
-var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], ua = 'AlbumCollage/0.1.0 ( danielserezane@outlook.com )';
+var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], artists = [], ua = 'AlbumChart/1.0.0 ( https://github.com/Salies/album-chart )';
 
 function repeat(callback) {
-    let i = 0,
+    var i = 0,
     interval = setInterval(function(){
        callback(i);
        if (++i === 100) {
@@ -12,6 +12,11 @@ function repeat(callback) {
        }
     }, 1000);
 }
+
+var restartInterval = function() {
+    intervalFunction();
+    interval = setInterval(intervalFunction, 1000 );
+};
 
 repeat(function(i){
     let coverArt,
@@ -23,9 +28,6 @@ repeat(function(i){
     if(cover===true){
         coverArt = `http://coverartarchive.org/release/${mbid}/front`;
     }
-    /*else if(cover.substring(0, 4) == "http"){
-        coverArt = cover;
-    }*/
     else{
         coverArt = cover;
     }
@@ -58,11 +60,10 @@ repeat(function(i){
             }
         }
 
-        let info = {
+       let info = {
             id:id,
             title: title,
             author: author,
-            authorID: authorID,
             release:release,
             cover: coverArt,
             tracks: tracks
@@ -70,10 +71,34 @@ repeat(function(i){
 
         master.push(info);
 
-        var albumsJSON = JSON.stringify(master);
-
         fs.writeFile('albums.json', albumsJSON, 'utf8', function(){
             console.log(`[${id}] "${author} - ${title}" inserido com sucesso.`);
-        }); 
+        });
+
+        function verify(arr, previous){
+            for(k=0;k<arr.length;k++){
+                if(arr[k].mbid == previous){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if(i!==0){
+            if(verify(artists, authorID)!==true){
+                artists.push({name:author /*just for identification and debugging*/, mbid:authorID})
+                var artistsJSON = JSON.stringify(artists);
+                fs.writeFile('artists.json', artistsJSON, 'utf8', function(){
+                    console.log(`${author} inserido com sucesso.`);
+                });
+            }
+        }
+        else{
+            fs.writeFile('artists.json', artistsJSON, 'utf8', function(){
+                console.log(`${author} inserido com sucesso.`);
+            });    
+        }
+
     }); 
 });
