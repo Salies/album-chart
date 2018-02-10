@@ -1,7 +1,7 @@
 const fs = require('fs');
 const request = require('request');
 
-var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], ua = 'AlbumChart/0.1.0 ( danielserezane@outlook.com )';
+var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], ua = 'AlbumCollage/0.1.0 ( danielserezane@outlook.com )';
 
 function repeat(callback) {
     let i = 0,

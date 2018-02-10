@@ -104,31 +104,33 @@ body{
     margin-top: 15px;
     margin-left: 15px;
     font-size:14px;
+    display:block;
+    margin-right: 25px;
 }
 
-.tracklist .number{
-    margin-right:10px;
-}
-
-.tracklist div{
-    margin-bottom:5px;
-    max-width: 360px;
-}
-
-.tracklist div:last-of-type{
-    margin-bottom:0;
-}
-
-.tracklist aside{
+.tracklist span{
+    display:block;
     float:left;
-    margin-left: 45px;
-    margin-bottom: 15px;
+    padding:3px;
 }
 
-.tracklist aside:first-of-type{
-    margin-left:0;
+.song{
+    display: inline-block;
 }
 
-.tracklist aside:last-of-type{
-    margin-right: 55px;
+.song:last-of-type{
+    margin-bottom:15px;
+}
+
+.number{
+    width:18px;
+    margin-right:15px;
+}
+
+.length{
+    float:right!important;
+}
+
+.name{
+    width:375px;
 }

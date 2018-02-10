@@ -36,19 +36,16 @@ $(".album img").click(function () {
         art = a[o].cover;
     }
 
-    var trackContainer = ["", ""];
+    var trackContainer = ["",""];
 
     for (t = 0; t < a[o].tracks.length; t++) {
-        if (a[o].tracks[t].name.indexOf("A)") !== -1 || a[o].tracks[t].name.indexOf("I)") !== -1) {
-            a[o].tracks[t].name = a[o].tracks[t].name.split(':')[0];
-        }
-
-        trackContainer[a[o].tracks[t].cd - 1] +=
-            `<div><span class="number">${a[o].tracks[t].number}</span><span class="track">${a[o].tracks[t].name}</span></div>`;
+        trackContainer[a[o].tracks[t].cd - 1] += `<div class="song"><span class="number">${a[o].tracks[t].number}</span><span class="name">${a[o].tracks[t].name}</span><span class="length">${a[o].tracks[t].length}</span></div><Br>`;
     }
 
-    $(".tracklist aside:nth-of-type(1)").html(trackContainer[0]);
-    $(".tracklist aside:nth-of-type(2)").html(trackContainer[1]);
+    $(".cd1").html(trackContainer[0]);
+    $(".cd2").html(trackContainer[1]);
+
+    console.log(trackContainer[0][0])
 
     if (rgbToHsl(c[o][0], c[o][1], c[o][2])[2] < 0.5) {
         $(".album-window").css("color", "#fff");
