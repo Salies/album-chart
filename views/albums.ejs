@@ -3,8 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Hundred Albums</title>
+    <meta property="og:title" content="A Hundred Albums">
+    <meta property="og:site_name" content="Salies Experiments">
+    <meta property="og:description" content="A hundred albums custom chart.">
+    <meta property="og:image" content="https://imgur.com/ms9LeoA.png">
+    <title>A Hundred Albums</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="https://saliesbox.com/exp.png">
     <link rel="stylesheet" type="text/css" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
@@ -23,28 +28,43 @@
     <div class="overlay">
         <img src="img/close.png" class="close noselect">
         <div class="album-window">
-            <img src="" class="album-display">
-            <div class="info">
-                <section class="title capitalize"></section>
-                <br>
-                <section class="artist capitalize"></section>
-                <br>
-                <section class="tracklist capitalize">
-                    <div class="cd1">
-                        <div class="song">
-                            <span class="number">1</span><span class="name">Música</span><span class="length">2:00</span>
+            <div class="album-data">
+                <img src="" class="album-display">
+                <div class="info">
+                    <section class="title capitalize"></section>
+                    <br>
+                    <section class="artist capitalize"></section>
+                    <br>
+                    <section class="tracklist capitalize">
+                        <div class="cd1">
+                            <div class="song">
+                                <span class="number">1</span><span class="name">Música</span><span class="length">2:00</span>
+                            </div>
+                            <div class="song">
+                                <span class="number">1</span><span class="name">Música</span><span class="length">2:00</span>
+                            </div>
                         </div>
-                        <div class="song">
-                            <span class="number">1</span><span class="name">Música</span><span class="length">2:00</span>
-                        </div>
-                    </div>
-                    <div class="cd2"></div>
-                </section>
+                        <div class="cd2"></div>
+                    </section>
+                </div>
             </div>
+
+            <div class="artist-data">
+                <img src="" class="artist-display">
+                <div class="artist-stuff">
+                    <section class="artist-name"></section>
+                    <br>
+                    <section class="artist-country"></section>
+                </div>
+                <br>
+                <section class="artist-bio"></section>
+            </div>
+
+            <div class="back noselect" onclick="artistDisplay(false)">&#8592; Go Back to Album</div>        
         </div>
     </div>
 
-    <script>let a = <%- JSON.stringify(albums) %>, c = <%- JSON.stringify(colors) %>;</script>
+    <script>let a = <%- JSON.stringify(albums) %>, c = <%- JSON.stringify(colors) %>, ats = <%- JSON.stringify(artists) %>;</script>
     <script src="js/work.js"></script>
 </body>
 </html>

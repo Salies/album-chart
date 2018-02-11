@@ -21,6 +21,19 @@ function rgbToHsl(a, e, r) {
     return [s, c, n]
 }
 
+function artistDisplay(bool){
+    if(bool===true){
+        $(".album-data").css("display", "none");
+        $(".artist-data").css("display", "block");
+        $(".back").css("display", "block");
+    }
+    else{
+        $(".album-data").css("display", "block");
+        $(".artist-data").css("display", "none");
+        $(".back").css("display", "none");
+    }
+}
+
 $(".close").click(function () {
     $(".overlay").css("display", "none")
 });
@@ -45,8 +58,6 @@ $(".album img").click(function () {
     $(".cd1").html(trackContainer[0]);
     $(".cd2").html(trackContainer[1]);
 
-    console.log(trackContainer[0][0])
-
     if (rgbToHsl(c[o][0], c[o][1], c[o][2])[2] < 0.5) {
         $(".album-window").css("color", "#fff");
         $(".album-window").css("font-weight", "300");
@@ -57,14 +68,31 @@ $(".album img").click(function () {
     $(".album-window").css("background", `rgb(${background})`);
     $(".album-display").attr("src", art);
     $(".info .title").html(a[o].title);
-    $(".info .artist").html(`${a[o].author} (${new Date(a[o].release).getFullYear()})`);
+    $(".info .artist").html(`<a onclick="artistDisplay(true)">${a[o].author}</a> (${new Date(a[o].release).getFullYear()})`);
+
+    //finding and mouting artist
+    for(g=0;g<ats.length;g++){
+        if(a[o].author == ats[g].name){
+            $(".artist-display").attr("src", ats[g].image);
+            $(".artist-name").html(ats[g].name);
+            $(".artist-bio").html(ats[g].info.replace(/ *\[[^\]]*]/g, '').replace(/\n/g,'<br><br>'));
+            $(".artist-country").html(`<img src="flags/4x3/${(ats[g].code).toLowerCase()}.svg" class="artist-flag"> ${ats[g].country}`);
+            break;
+        }
+    }
 
     $(".overlay").css("display", "block");
+
+    if($(".album-window").outerHeight() > $(".overlay").outerHeight()){
+        $(".album-window").addClass("extra");
+    }
 });
 
 $(document).mouseup(function (e) {
     var container = $(".album-window");
     if (!container.is(e.target) && container.has(e.target).length === 0) {
         $(".overlay").hide();
+        $(".album-window").removeClass("extra");
+        artistDisplay(false);
     }
 });

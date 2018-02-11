@@ -1,5 +1,4 @@
-const fs = require('fs');
-const request = require('request');
+const fs = require('fs'), request = require('request');
 
 var albums = JSON.parse(fs.readFileSync('list.json', 'utf8')).albums, master = [], artists = [], ua = 'AlbumChart/1.0.0 ( https://github.com/Salies/album-chart )';
 
@@ -66,9 +65,11 @@ repeat(function(i){
 
         master.push(info);
 
-        fs.writeFile('albums.json', albumsJSON, 'utf8', function(){
+        var albumsJSON = JSON.stringify(master), artistsJSON;
+
+        /*fs.writeFile('albums.json', albumsJSON, 'utf8', function(){
             console.log(`[${id}] "${author} - ${title}" inserido com sucesso.`);
-        });
+        });*/
 
         function verify(arr, previous){
             for(k=0;k<arr.length;k++){
@@ -82,15 +83,17 @@ repeat(function(i){
 
         if(i!==0){
             if(verify(artists, authorID)!==true){
-                artists.push({name:author /*just for identification and debugging*/, mbid:authorID})
-                var artistsJSON = JSON.stringify(artists);
-                fs.writeFile('artists.json', artistsJSON, 'utf8', function(){
+                artists.push({name:author /*just for identification and debugging*/, mbid:authorID});
+                artistsJSON = JSON.stringify(artists);
+                fs.writeFile('artists-list.json', artistsJSON, 'utf8', function(){
                     console.log(`${author} inserido com sucesso.`);
                 });
             }
         }
         else{
-            fs.writeFile('artists.json', artistsJSON, 'utf8', function(){
+            artists.push({name:author /*just for identification and debugging*/, mbid:authorID});
+            artistsJSON = JSON.stringify(artists);
+            fs.writeFile('artists-list.json', artistsJSON, 'utf8', function(){
                 console.log(`${author} inserido com sucesso.`);
             });    
         }
