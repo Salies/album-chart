@@ -17,6 +17,7 @@
 </head>
 
 <body>
+    <img src="img/arrow-down.png" class="minimize">
     <div class="wrapper">
         <% for(var i = 0; i < list.length; i++) {%>
             <div class="album noselect">
@@ -26,7 +27,7 @@
     </div>
 
     <div class="overlay">
-        <img src="img/close.png" class="close noselect">
+        <img src="img/close.png" class="close noselect" onclick='$(".overlay").css("display", "none");;'>
         <div class="album-window">
             <div class="album-data">
                 <img src="" class="album-display">
@@ -64,7 +65,38 @@
         </div>
     </div>
 
-    <script>let a = <%- JSON.stringify(albums) %>, c = <%- JSON.stringify(colors) %>, ats = <%- JSON.stringify(artists) %>;</script>
+    <div id="player" style="display:none"></div>
+
+    <div class="playback-manager">
+        <img src="" class="playback-album-cover">
+        <div class="playback-info">
+            <span>Now Playing:</span><br>
+            <span>Anything</span><br>
+            <span>Anybody</span>
+        </div>
+
+        <div class="playback-controls">
+            <img src="img/backward.png" class="bw" onclick="jumpSong('previous')">
+            <img src="img/loading.png" class="pp">
+            <img src="img/forward.png" class="fw" onclick="jumpSong('next')">
+            <span class="currentTime">0:00</span>
+            <input class="realBar bar" type="range" min="0" max="100" value="0">
+            <div class="progressBar">
+                <div class="progress pb"></div>
+            </div>
+            <span class="totalTime">0:00</span>
+        </div>
+
+        <div class="playback-volume">
+            <img src="img/volume.png">
+            <input class="realVolume" type="range" min="0" max="100">
+            <div class="volume-progressBar">
+                <div class="volume-progress pb"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>let a = <%- JSON.stringify(albums) %>, c = <%- JSON.stringify(colors) %>, ats = <%- JSON.stringify(artists) %>, key = <%- JSON.stringify(key) %>;</script>
     <script src="js/work.js"></script>
 </body>
 </html>
