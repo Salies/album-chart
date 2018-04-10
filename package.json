@@ -1,23 +1,25 @@
 {
   "name": "album-chart",
   "version": "1.0.0",
-  "description": "A hundred albums chart.",
+  "description": "Create your own, custom Last.fm interactive chart!",
   "main": "app.js",
   "dependencies": {
+    "async": "^2.6.0",
     "ejs": "^2.5.7",
-    "express": "^4.16.2",
-    "request": "^2.83.0"
+    "express": "^4.16.3",
+    "get-image-colors": "^1.8.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node app.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Salies/album-chart.git"
   },
   "author": "Salies",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Salies/album-chart/issues"
   },

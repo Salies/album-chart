@@ -1,33 +1,109 @@
-var currentInfo, playbackState, displayTrack, nowPlaying = {previous:'', next:''}, started = false, clicked = false, minimized = false, isClicking = false, isClickingVolume = false;
+var youtubeAPIkey = 'YOUR_YOUTUBE_API_KEY',
+    init = false,
+    clicked = false,
+    minimized = false,
+    isClicking = {
+        d: false,
+        v: false
+    },
+    lastView = {
+        name: '',
+        author: '',
+        cover: '',
+        tracks: []
+    },
+    nowPlaying = {
+        name: '',
+        author: '',
+        tracks: null,
+        track: ''
+    };
 
-function rgbToHsl(a, e, r) {
-    a /= 255, e /= 255, r /= 255;
-    var s, c, t = Math.max(a, e, r),
-        i = Math.min(a, e, r),
-        n = (t + i) / 2;
-    if (t == i) s = c = 0;
-    else {
-        var b = t - i;
-        switch (c = n > .5 ? b / (2 - t - i) : b / (t + i), t) {
-            case a:
-                s = (e - r) / b + (e < r ? 6 : 0);
-                break;
-            case e:
-                s = (r - a) / b + 2;
-                break;
-            case r:
-                s = (a - e) / b + 4
-        }
-        s /= 6
-    }
-    return [s, c, n]
+function time(s) {
+    let ps = parseInt(s / 60, 10);
+    s = Math.round(s);
+    return ps + ':' + (s - ps * 60 < 10 ? `0${s - ps * 60}` : s - ps * 60);
 }
+
+function error(msg) {
+    $('.log span').html(msg);
+    $('.log').slideToggle("slow").css('display', 'flex');
+    setTimeout(function () {
+        $('.log').slideToggle();
+    }, 3000);
+}
+
+$('.square').click(function () {
+    if ($(this).hasClass('inactive') === true) {
+        return;
+    }
+    $(".overlay").css("display", "flex");
+    $(".circle").css("display", "block");
+
+    $(".cover-art").attr("src", $(this).css('background-image').replace('url(', '').replace(')', '').replace(/\"/gi, ""));
+    $(".thead span:nth-of-type(1)").html(`<a href="https://www.google.com.br/search?q=${$(this).data('author')} - ${$(this).data('name')}" target="_blank">${$(this).data('name')}</a>`);
+    $(".thead span:nth-of-type(2)").html(`<a href="https://www.google.com.br/search?q=${$(this).data('author')} (artist)" target="_blank">${$(this).data('author')}</a>`);
+
+    lastView.name = $(this).data('name'), lastView.author = $(this).data('author'), lastView.cover = $(this).css('background-image').replace('url(', '').replace(')', '').replace(/\"/gi, "");
+
+    $.ajax({
+        url: `/album?artist=${$(this).data('author')}&album=${$(this).data('name')}`,
+        context: document.body
+    }).done(function (res) {
+        if (Array.isArray(res.tracks) === true) {
+            let tracks = '';
+            lastView.tracks = res.tracks;
+            for (i = 0; i < res.tracks.length; i++) {
+                tracks += `<span class="song"><span>${i + 1}</span><span>${res.tracks[i].name}</span><span>${res.tracks[i].duration}</span></span><br>`;
+            }
+            $('.tracklist').html(tracks);
+            console.log(lastView);
+
+            if (res.light < 0.5) {
+                $(".showcase").css({
+                    'color': '#fff',
+                    'font-weight': '300'
+                });
+            } else {
+                $(".showcase").css({
+                    'color': '#000',
+                    'font-weight': '400'
+                });
+            }
+
+            $(".showcase").css("background", `hsl(${res.color})`);
+
+            $(".circle").css("display", "none");
+            $(".showcase").css("display", "inline-block");
+        } else {
+            $(".showcase").css("background", `hsl(${res.color})`);
+            $('.tracklist').html(res);
+            $(".circle").css("display", "none");
+            $(".showcase").css("display", "inline-block");
+        }
+    });
+});
+
+$('.overlay').mouseup(function (e) {
+    if (!$(".showcase").is(e.target) && $(".showcase").has(e.target).length === 0) {
+        $(".overlay").hide();
+        $(".showcase").css({
+            'display': 'none',
+            'background': '#1a1a1a'
+        });
+        $('.tracklist').html('');
+    }
+});
 
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 3. This function creates an <iframe> (and YouTube player)
+//    after the API code downloads.
 var player;
+
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '0',
@@ -45,272 +121,197 @@ function onPlayerReady(e) {
 }
 
 function onPlayerStateChange(e) {
-    if(player.getDuration()!=0 && clicked===true){
+    playbackState = e.data;
+
+    if (player.getDuration() != 0 && clicked === true) {
         clicked = false;
-        $(".totalTime").html(round(player.getDuration() - 1));
+        $(".totalTime").html(time(player.getDuration() - 1));
         $(".realVolume").val(player.getVolume());
-        $('.volume-progress').animate({width: `${player.getVolume()}%`});
+        $('.volume-progress').animate({
+            width: `${player.getVolume()}%`
+        });
         let getPorc = (player.getCurrentTime() * 100) / player.getDuration();
-        $('.progress').animate({width: `${getPorc}%`});
+        $('.progress').animate({
+            width: `${getPorc}%`
+        });
         $(".realVolume").fadeIn();
         $(".realBar").attr("max", player.getDuration() - 1);
     }
 
-    playbackState = e.data;
-    
-    if(playbackState==2 || playbackState===undefined){
+    if (playbackState == 2 || playbackState === undefined) {
         $('.pp').attr('src', 'img/play.png');
-    }
-    else if(playbackState==0){
+    } else if (playbackState == 0) {
         $('.pp').attr('src', 'img/replay.png');
-    }
-    else{
-        $('.pp').attr('src', 'img/pause.png');  
-        setInterval(function(){ 
-            if(!isClicking){
+    } else {
+        $('.pp').attr('src', 'img/pause.png');
+        setInterval(function () {
+            if (!isClicking.d) {
                 $(".realBar").val(player.getCurrentTime());
                 let porc = (player.getCurrentTime() * 100) / player.getDuration();
                 $('.progress').css('width', `${porc}%`);
             }
         }, 100);
 
-        setInterval(function(){
-            if(!isClicking){
-                $('.currentTime').html(round(player.getCurrentTime()));
+        setInterval(function () {
+            if (!isClicking.d) {
+                $('.currentTime').html(time(player.getCurrentTime()));
             }
         }, 1000)
     }
 }
 
-$(".realBar").change(function(){
-    player.seekTo($(".realBar").val());
-}).mousedown(function(){
-    isClicking = true;
-}).mouseup(function(){
-    isClicking = false;
-}).mousemove(function(){
-    if(isClicking===false){return;}
-    let currentPorc = ($(".realBar").val() * 100) / player.getDuration();
-    $('.progress').css('width', `${currentPorc}%`);
-    $(".currentTime").html(round($(".realBar").val()));
-}).mouseenter(function() {
-    $('.progress').css('background', '#2791d4');
-}).mouseleave(function() {
-    $('.progress').css('background', '#a0a0a0');
-});
-
-$('.realVolume').mousedown(function(){
-    isClickingVolume = true;
-}).mousemove(function(){
-    if(isClickingVolume===false){return;}
-    $('.volume-progress').css('width', `${$(this).val()}%`);
-    player.setVolume($(this).val());
-}).mouseenter(function() {
-    $('.volume-progress').css('background', '#2791d4');
-}).mouseleave(function() {
-    $('.volume-progress').css('background', '#a0a0a0');
-});
-
-function round(x){
-    x = Number(x);
-    let m = Math.floor(x / 60), s = Math.floor(x - m * 60);
-    return ('0' + m).slice(-2) + ':' + ('0' + s).slice(-2);
+function stopVideo() {
+    player.stopVideo();
 }
 
-function sec(x){
-    let y = x.split(':'), min = Number(y[0]) * 60;
-    return(min + Number(y[1]));
-}
-
-function artistDisplay(bool){
-    if(bool===true){
-        $(".album-data").css("display", "none");
-        $(".artist-data").css("display", "block");
-        $(".back").css("display", "block");
-    }
-    else{
-        $(".album-data").css("display", "block");
-        $(".artist-data").css("display", "none");
-        $(".back").css("display", "none");
-    }
-}
-
-function vid(track, url){
-    for(j=0;j<currentInfo.tracks.length;j++){
-        let t = currentInfo.tracks;
-        if(t[j].name.toLowerCase() == track.toLowerCase()){
-            if(t[j - 1]===undefined){
-                nowPlaying.previous = track;
-            }
-            else{
-                nowPlaying.previous = t[j - 1].name;   
-            }
-
-            if(t[j + 1]===undefined){
-                nowPlaying.next = t[0].name;
-            }
-            else{
-                nowPlaying.next = t[j + 1].name;
-            }
-        }
-    }
-
+function song(author, track) {
     $.ajax({
-        url: url,
+        url: `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=1&q=${author} ${track} song&type=video&key=${youtubeAPIkey}`,
         context: document.body
-        }).done(function(res) {
-        /*console.log(res.items[0].id.videoId);
-        console.log(displayTrack);*/
-        if(track == 'Angels Cry' || track == 'Building the Church'){
-            player.loadVideoById(res.items[1].id.videoId);
+    }).done(function (res) {
+        if (!res.items[0]) {
+            console.log('No video matches found.');
+            error('Track Not Found.');
+            return;
         }
-        else{
-            player.loadVideoById(res.items[0].id.videoId);  
+
+        //track found...
+
+        /*DEVELOPMENT COMMENTARY:
+            It would be "cleaner" if a dealt with changing the elements in their respective calls, thus not needing the ifs. But, there are times where the song is not found on YouTube, and
+            the only way to find that would is through the ajax call. So, to prevent another control variable/callback function, I've decided to just move those .html() in here, with the ifs
+            for verifying if the changes are truly needed.
+        */
+        if (nowPlaying.tracks[nowPlaying.track].name.length >= 35 && nowPlaying.tracks[nowPlaying.track].name === nowPlaying.tracks[nowPlaying.track].name.toUpperCase()) {
+            $('.playback-info span:nth-of-type(2)').html(`${nowPlaying.tracks[nowPlaying.track].name.slice(0, 30)}...`);
+        } else if (nowPlaying.tracks[nowPlaying.track].name.length >= 45) {
+            $('.playback-info span:nth-of-type(2)').html(`${nowPlaying.tracks[nowPlaying.track].name.slice(0, 42)}...`);
+        } else {
+            $('.playback-info span:nth-of-type(2)').html(nowPlaying.tracks[nowPlaying.track].name);
         }
-        //player.setVolume(100);
-        console.log(currentInfo.albumId);
-        $(".playback-album-cover").attr("src", currentInfo.cover);
-        $(".playback-info span:nth-of-type(2)").html(track);
-        $(".playback-info span:nth-of-type(3)").html(currentInfo.author);
+        if ($('.playback-info span:nth-of-type(3)').html() != nowPlaying.author) $('.playback-info span:nth-of-type(3)').html(nowPlaying.author);
+        if ($('.playback-album-cover').attr('src') != lastView.cover) $('.playback-album-cover').attr('src', lastView.cover);
+        if (init === false) {
+            init = true;
+            $('footer').animate({
+                paddingBottom: 85
+            });
+            $('.minimize').css('display', 'block');
+            $('.minimize').animate({
+                bottom: '90px'
+            });
+            $('.playback-manager').slideToggle();
+            $('.showcase').addClass('expanded');
+        }
+        player.loadVideoById(res.items[0].id.videoId);
     });
 }
 
-function getTrack(track){
-    $('.wrapper').css('padding-bottom', '75px');
-    clicked = true;
+function jSong(n) {
+    if (n == 0) {
+        if (nowPlaying.track == 0) {
+            player.seekTo(0);
+            return;
+        }
 
-    if(track.innerHTML.length > 70){
-        displayTrack = track.innerHTML.split(':')[0];
-    }
-    else{
-        displayTrack = track.innerHTML;
-    }
-
-    let song = `${currentInfo.author} ${displayTrack} song`, url = `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=2&q=${song}&type=video&key=${key}`;
-
-    vid(displayTrack, url);
-}
-
-function jumpSong(jump){
-    let trackName = '';
-    if(jump=='next'){
-        trackName = nowPlaying.next;
-    }
-    else if(jump=='previous'){
-        trackName = nowPlaying.previous;
-    }
-
-    let song = `${currentInfo.author} ${trackName} song`, url = `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=2&q=${song}&type=video&key=${key}`;
-
-    vid(trackName, url);
-    console.log(trackName);
-}
-
-$(".pp").click(function(){
-    if(playbackState==1){
-        player.pauseVideo();
-    }
-    else if(playbackState==2){
-        player.playVideo();
-    }
-    else{
-        player.playVideo();
-    }
-});
-
-$('.minimize').click(function(){
-    $('.playback-manager').slideToggle();
-    if(minimized===false){
-        minimized = true;
-        $('.wrapper').animate({paddingBottom: 0});
-        $(this).css('transform', 'scaleY(-1)');
-        $(this).animate({bottom : '15px'});
-    }
-    else{
-        minimized = false;
-        $('.wrapper').css('padding-bottom', '75px');
-        $(this).css('transform', 'scaleY(1)');
-        $(this).animate({bottom : '90px'});
-    }
-});
-
-$(".album img").click(function () {
-    let o = parseInt(this.id, 10) - 1,
-        background = `${c[o][0]}, ${c[o][1]}, ${c[o][2]}`,
-        art;
-
-    if (a[o].cover === true) {
-        art = `http://coverartarchive.org/release/${a[o].mbid}/front`;
+        nowPlaying.track = nowPlaying.track - 1;
     } else {
-        art = a[o].cover;
-    }
-
-    currentInfo = {
-        author: a[o].author,
-        albumId: a[o].id,
-        tracks: a[o].tracks,
-        cover: art
-    };
-
-    var trackContainer = ["",""];
-
-    for (t = 0; t < a[o].tracks.length; t++) {
-        trackContainer[a[o].tracks[t].cd - 1] += `<div class="song"><span class="number">${a[o].tracks[t].number}</span><span class="name" onclick="getTrack(this); if(started===false){started = true; $('.minimize').css('display', 'block'); $('.minimize').animate({bottom : '90px'});$('.playback-manager').slideToggle();}">${a[o].tracks[t].name}</span><span class="length">${a[o].tracks[t].length}</span></div><Br>`;
-    }
-
-    $(".cd1").html(trackContainer[0]);
-    $(".cd2").html(trackContainer[1]);
-
-    if (rgbToHsl(c[o][0], c[o][1], c[o][2])[2] < 0.5) {
-        $(".album-window").css("color", "#fff");
-        $(".album-window").css("font-weight", "300");
-    } else {
-        $(".album-window").css("color", "#000");
-        $(".album-window").css("font-weight", "400");
-    }
-    $(".album-window").css("background", `rgb(${background})`);
-    $(".album-display").attr("src", art);
-    $(".info .title").html(a[o].title);
-    $(".info .artist").html(`<a onclick="artistDisplay(true)">${a[o].author}</a> (${new Date(a[o].release).getFullYear()})`);
-
-    //finding and mouting artist
-    for(g=0;g<ats.length;g++){
-        if(a[o].author == ats[g].name){
-            $(".artist-display").attr("src", ats[g].image);
-            $(".artist-name").html(ats[g].name);
-            $(".artist-bio").html(ats[g].info.replace(/ *\[[^\]]*]/g, '').replace(/\n/g,'<br><br>'));
-            $(".artist-country").html(`<img src="https://salies.github.io/csgo-profiler/assets/flags/${(ats[g].code).toLowerCase()}.svg" class="artist-flag"> ${ats[g].country}`);
-            break;
+        if (nowPlaying.track == nowPlaying.tracks.length - 1) {
+            nowPlaying.track = 0;
+        } else {
+            nowPlaying.track = nowPlaying.track + 1;
         }
     }
 
-    $(".overlay").css("display", "block");
+    song(nowPlaying.author, nowPlaying.tracks[nowPlaying.track].name);
+}
 
-    if($(".album-window").outerHeight() > $(".overlay").outerHeight()){
-        $(".album-window").addClass("extra");
+$(document).on('click', '.song span:nth-of-type(2)', function () {
+    clicked = true;
+    nowPlaying.name = lastView.name, nowPlaying.author = lastView.author, nowPlaying.tracks = lastView.tracks, nowPlaying.track = Number($(this).prev().html()) - 1;
+    song($('.thead span:nth-of-type(2) a').html(), $(this).html());
+});
+
+$('.minimize').click(function () {
+    $('.playback-manager').slideToggle();
+    if (minimized === false) {
+        minimized = true;
+        $('.showcase').removeClass('expanded');
+        $('footer').animate({
+            paddingBottom: 10
+        });
+        $(this).css('transform', 'scaleY(-1)');
+        $(this).animate({
+            bottom: '15px'
+        });
+        if ($(document).scrollTop() >= ($(document).height() - $(window).height()) - $('footer').outerHeight() + $('.playback-manager').outerHeight()) {
+            $('.minimize').addClass("mini-ab-close");
+        }
+    } else {
+        $('.minimize').removeClass("mini-ab-close");
+        $('.showcase').addClass('expanded');
+        minimized = false;
+        $('footer').animate({
+            paddingBottom: 85
+        });
+        $(this).css('transform', 'scaleY(1)');
+        $(this).animate({
+            bottom: '90px'
+        });
     }
 });
 
-$('.overlay').mouseup(function (e) {
-    var container = $(".album-window");
-    if (!container.is(e.target) && container.has(e.target).length === 0) {
-        $(".overlay").hide();
-        $(".album-window").removeClass("extra");
-        artistDisplay(false);
+$(".pp").click(function () {
+    if (playbackState == 1) {
+        player.pauseVideo();
+    } else if (playbackState == 2) {
+        player.playVideo();
+    } else {
+        player.playVideo();
     }
 });
 
-    /*
-    UNUSED FILTER ALGORITHM
-    if(l >= 1260){
-        url = `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=1&videoDuration=long&q=${song}&type=video&key=${key}`;
+$(".realBar").change(function () {
+    player.seekTo($(".realBar").val());
+}).mousedown(function () {
+    isClicking.d = true;
+}).mouseup(function () {
+    isClicking.d = false;
+}).mousemove(function () {
+    if (isClicking.d === false) {
+        return;
     }
-    else if(l < 300){
-        url = `https://www.googleapis.com/youtube/v3/search?part=id&videoDuration=short&maxResults=1&q=${song}&type=video&key=${key}`
+    let currentPorc = ($(".realBar").val() * 100) / player.getDuration();
+    $('.progress').css('width', `${currentPorc}%`);
+    $(".currentTime").html(time($(".realBar").val()));
+}).mouseenter(function () {
+    $('.progress').css('background', '#2791d4');
+}).mouseleave(function () {
+    $('.progress').css('background', '#a0a0a0');
+});
+
+$('.realVolume').mousedown(function () {
+    isClicking.v = true;
+}).mousemove(function () {
+    if (isClicking.v === false) {
+        return;
     }
-    else if(l < 900){
-        url = `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=1&videoDuration=medium&q=${song}&type=video&key=${key}`;
+    $('.volume-progress').css('width', `${$(this).val()}%`);
+    player.setVolume($(this).val());
+}).mouseenter(function () {
+    $('.volume-progress').css('background', '#2791d4');
+}).mouseleave(function () {
+    $('.volume-progress').css('background', '#a0a0a0');
+});
+
+$(document).scroll(function () {
+    if ($(this).scrollTop() >= ($(document).height() - $(window).height()) - $('footer').outerHeight() + $('.playback-manager').outerHeight() && $('.playback-manager').is(':visible') && init === true) {
+        $('.minimize').addClass('mini-ab-open');
+    } else if ($(this).scrollTop() >= ($(document).height() - $(window).height()) - $('footer').outerHeight() && !$('.playback-manager').is(':visible') && init === true) {
+        $('.minimize').removeClass('mini-ab-open');
+        $('.minimize').addClass('mini-ab-close');
+    } else {
+        $('.minimize').removeClass('mini-ab-open');
+        $('.minimize').removeClass('mini-ab-close');
     }
-    else{
-        url = `https://www.googleapis.com/youtube/v3/search?part=id&maxResults=1&q=${song}&type=video&key=${key}`
-    }*/
+});

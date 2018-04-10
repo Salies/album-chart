@@ -1,0 +1,636 @@
+body {
+    background: #303030;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+}
+
+header {
+    height: 40px;
+    width: calc(100% - 16px);
+    padding: 8px;
+    background: #212121;
+    position: fixed;
+    color: #fff;
+    display: flex;
+}
+
+form {
+    display: inherit;
+}
+
+.form {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form input[type="text"] {
+    margin-right: 15px;
+    width: 200px;
+    padding: 7px;
+    border-width: 0;
+    outline: none;
+}
+
+.form button {
+    border-radius: 2px;
+    background-color: #303030;
+    color: #fff;
+    transition: background-color .25s;
+    font-size: 15px;
+    padding: 7.5px 10px;
+    border-width: 0;
+    outline: none;
+    cursor: pointer;
+}
+
+.form button:hover {
+    background: #4a4a4a;
+}
+
+.form button:active {
+    background: #595959;
+}
+
+.h-title {
+    font-weight: 300;
+    font-size: 1.25rem;
+    display: flex;
+    align-self: center;
+}
+
+.h-title a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.h-container {
+    display: flex;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1100px;
+    align-self: center;
+    justify-content: space-between;
+}
+
+.nav div {
+    height: 20px;
+    padding: 18px;
+    float: left;
+    cursor: pointer;
+}
+
+.nav a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav div:hover {
+    background: #424242;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 1100px;
+    min-height: calc(100vh - 116px);
+    padding-top: calc(15px + 56px);
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.square {
+    width: calc(20% - 8px);
+    /*8 = 40/5*/
+    padding-bottom: calc(20% - 8px);
+    /*same here to create a square*/
+    background-position: center;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    height: 0;
+}
+
+.square:nth-child(5n) {
+    margin-right: 0;
+}
+
+.inactive {
+    display: flex;
+    padding-bottom: 0;
+    height: auto;
+}
+
+footer {
+    width: calc(100% - 30px);
+    background: #202225;
+    font-size: 12px;
+    color: #fff;
+    padding: 10px 15px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+iframe:first-of-type {
+    margin-right: 5px;
+}
+
+/*album displayer*/
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1;
+    top: 0;
+    left: 0;
+    justify-content: center;
+}
+
+.showcase {
+    align-self: center;
+    display: none;
+    height: auto;
+    background: #1a1a1a;
+    color: #fff;
+    max-width: 75vw;
+    max-height: 90vh;
+    padding: 15px;
+    font-family: 'Open Sans', sans-serif;
+    overflow: auto;
+}
+
+.expanded {
+    max-height: calc(90vh - 125px);
+}
+
+.info {
+    float: left;
+    margin-top: 10px;
+}
+
+.cover-art {
+    width: 225px;
+    float: left;
+}
+
+.thead {
+    margin-left: 25px;
+}
+
+.thead a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.thead span,
+.song span {
+    text-transform: capitalize;
+}
+
+.thead span:nth-of-type(1) {
+    font-weight: 700;
+    font-size: 18px;
+    display: block;
+    max-width: 485px;
+}
+
+.thead span:nth-of-type(2) {
+    font-size: 15px;
+    margin-top: 3px;
+    display: block;
+}
+
+.thead span:nth-of-type(2):hover {
+    text-decoration: underline;
+}
+
+.tracklist {
+    margin-left: 40px;
+    margin-top: 15px;
+    overflow-y: auto;
+}
+
+.song {
+    display: inline-flex;
+    padding: 5px;
+    text-align: justify;
+}
+
+.song span {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.song span:nth-of-type(1) {
+    margin-right: 15px;
+    width: 20px;
+}
+
+.song span:nth-of-type(2) {
+    width: 375px;
+    margin-right: 25px;
+}
+
+.song span:nth-of-type(2):hover {
+    text-decoration: underline;
+}
+
+/*loading circle spinner from https://codepen.io/Beaugust/pen/DByiE*/
+
+.circle {
+    position: absolute;
+    top: 50%;
+    height: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    border: 10px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #FFF;
+    -webkit-animation: spin 1s infinite linear;
+    animation: spin 1s infinite linear;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.playback-manager {
+    width: 100%;
+    height: 75px;
+    position: fixed;
+    z-index: 2;
+    bottom: 0;
+    background: #282828;
+    display: none;
+}
+
+.playback-album-cover {
+    width: 50px;
+    float: left;
+    margin-top: 12.5px;
+    margin-left: 15px;
+}
+
+.playback-info {
+    float: left;
+    margin-top: 16.5px;
+    margin-left: 10px;
+    text-align: left;
+}
+
+.playback-info span {
+    display: block;
+    max-width: 285px;
+    overflow: hidden;
+    /*to prevent the player from breaking in case "..." replace in JS doesn't work*/
+}
+
+.playback-info span:nth-of-type(1) {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    margin-bottom: -15px;
+}
+
+.playback-info span:nth-of-type(2) {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: -20px;
+    text-transform: capitalize;
+}
+
+.playback-info span:nth-of-type(3) {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+}
+
+.playback-controls {
+    position: relative;
+    width: 500px;
+    height: 75px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.playback-controls img:nth-of-type(2) {
+    width: 30px;
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-top: 12.5px;
+    cursor: pointer;
+    opacity: .5;
+}
+
+.pp:hover {
+    opacity: 1;
+}
+
+.progressBar,
+.volume-progressBar {
+    width: 90%;
+    height: 4px;
+    background: #404040;
+    border-radius: 2px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.volume-progressBar {
+    width: 82px;
+}
+
+.progress,
+.volume-progress {
+    height: 4px;
+    width: 100%;
+    background: #a0a0a0;
+    border-radius: 2px;
+}
+
+.timeBars {
+    margin: 0 auto;
+}
+
+.currentTime,
+.totalTime {
+    position: absolute;
+    color: #b3b3b3;
+}
+
+.currentTime {
+    left: 0;
+    top: 52px;
+    font-size: 12px;
+    margin-left: -15px;
+}
+
+.totalTime {
+    right: 0;
+    top: 50px;
+    font-size: 12px;
+    margin-right: -15px;
+}
+
+.playback-volume {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.playback-volume img {
+    width: 15px;
+    position: absolute;
+    left: 0;
+    margin-left: -24.5px;
+    margin-top: -5px;
+}
+
+.minimize {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    width: 15px;
+    cursor: pointer;
+    z-index: 2;
+    display: none;
+}
+
+.mini-ab-open {
+    position: absolute;
+    bottom: 125px !important;
+}
+
+.mini-ab-close {
+    position: absolute;
+    bottom: 50px !important;
+}
+
+.realBar {
+    position: absolute;
+    left: 25px;
+    bottom: 15px;
+    width: 90%;
+    height: 4px;
+    opacity: 0;
+    z-index: 3;
+    margin-bottom: -1px;
+}
+
+.realBar:hover {
+    opacity: 1;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    background: transparent;
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    background: none;
+}
+
+input[type=range]::-ms-track {
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-left: -1px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-left: -1px;
+}
+
+input[type=range]::-ms-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-left: -1px;
+}
+
+.playback-volume input[type=range]::-webkit-slider-thumb {
+    margin-left: 0 !important;
+}
+
+.pb {
+    width: 0;
+}
+
+.realVolume {
+    position: absolute;
+    width: 82px;
+    z-index: 3;
+    left: 0;
+    top: -4px;
+    display: none;
+}
+
+.playback-controls img:nth-of-type(1),
+.playback-controls img:nth-of-type(3) {
+    width: 15px;
+    margin-bottom: 16px;
+    opacity: .5;
+    cursor: pointer;
+}
+
+.playback-controls img:nth-of-type(1):hover,
+.playback-controls img:nth-of-type(3):hover {
+    opacity: 1;
+}
+
+.playback-controls img:nth-of-type(1) {
+    margin-right: 15px;
+}
+
+.playback-controls img:nth-of-type(3) {
+    margin-left: 15px;
+}
+
+.log {
+    position: fixed;
+    right: 0;
+    top: 56px;
+    padding: 10px;
+    font-size: 14px;
+    width: auto;
+    text-align: right;
+    color: #fff;
+    background: #D20E1C;
+    display: flex;
+    align-items: center;
+    display: none;
+}
+
+.log img {
+    width: 25px;
+    margin-right: 5px;
+}
+
+.error {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+    color: #ff6e6e;
+}
+
+/*mobile stuff*/
+
+@media (max-width: 1100px) {
+    header {
+        padding: 8px 15px;
+    }
+    .h-title {
+        font-size: 1em;
+    }
+    .nav {
+        display: none;
+    }
+    .wrapper {
+        width: calc(100% - 30px);
+        padding: calc(15px + 56px) 15px 15px 15px;
+    }
+    .inactive {
+        font-size: 0.25em;
+    }
+    .cover-art {
+        width: 100%;
+    }
+    .thead {
+        margin-left: 0;
+    }
+    .tracklist {
+        margin-left: 0;
+    }
+    .song span:nth-of-type(2) {
+        width: auto;
+    }
+    .playback-album-cover {
+        display: none;
+    }
+    .playback-info {
+        display: none;
+    }
+    .playback-controls {
+        width: 100%;
+    }
+    .playback-volume {
+        display: none;
+    }
+    .totalTime {
+        margin-right: 0;
+        right: 10px;
+    }
+    .currentTime {
+        margin-left: 0;
+        left: 10px;
+    }
+    .realBar,
+    .progressBar {
+        width: 75%;
+    }
+}
