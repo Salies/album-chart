@@ -1,4 +1,4 @@
 # album-chart
 A hundred albums chart.
 
-**Demo:** http://albums.saliesbox.com/
+**Demo:** https://albums.saliesbox.com/
