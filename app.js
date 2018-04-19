@@ -15,7 +15,6 @@ app.get('/', function (req, res) {
 });
 
 app.get('/album', function (req, res) {
-    if (!req.headers.origin) {
         var response = res;
         request(`http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastfmKey}&artist=${req.query.artist}&album=${req.query.album}&format=json`, function (err, req, res) {
             if (err) {
@@ -56,7 +55,6 @@ app.get('/album', function (req, res) {
                 response.send(r.message);
             }
         });
-    }
 });
 
 app.get('/:user', function (req, res) {
